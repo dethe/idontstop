@@ -1,0 +1,35 @@
+section{
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td{
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+}
+
+button{
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background-image: url('../images/button_normal.png');
+    background-size: contain;
+    outline: none;
+    border: 1px solid #333;
+    /*border-radius: 3px;*/
+    padding: 0;
+}
+
+button.playing{
+    background-image: url('../images/button_playing.png');
+}
+
+button.recording{
+    background-image: url('../images/button_record.png');
+}
+
+em{
+    font-style: italic;
+}
