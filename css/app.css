@@ -5,19 +5,22 @@ section{
 }
 
 td{
+    position: relative;
     width: 60px;
     height: 60px;
     overflow: hidden;
 }
 
 button{
-    position: relative;
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 60px;
     height: 60px;
     background-image: url('../images/button_normal.png');
     background-size: contain;
     outline: none;
-    border: 1px solid #333;
+    border: 1px outst #CCC;
     /*border-radius: 3px;*/
     padding: 0;
 }
@@ -28,6 +31,22 @@ button.playing{
 
 button.recording{
     background-image: url('../images/button_record.png');
+}
+
+p{
+    position: relative;
+}
+
+button.info{
+    position: absolute;
+    left: auto;
+    top: auto;
+    right: 10px;
+    bottom: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #333;
 }
 
 em{

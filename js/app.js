@@ -14,6 +14,18 @@
         return parseInt(elem.id.match(/(\d)/)[0], 10);
     }
 
+    function restoreSavedAudio(i){
+        localforage.getItem('audio'+i, function(err, value){
+            if (value){
+                audioElems[i].src = URL.createObjectURL(value);
+            }
+        });
+        localforage.getItem('title'+i, function(err, value){
+            console.log('getting title %s', i);
+            buttons[i].firstChild.textContent = value || 'audio'+i;
+        });
+    }
+
     for (var i = 0; i < 16; i++){
         buttons[i] = $$('button' + i);
         audioElems[i] = $$('audio' + i);
@@ -21,6 +33,7 @@
         buttonHandlers[i].on('tap', handleTap);
         buttonHandlers[i].on('doubletap', handleDoubleTap);
         buttonHandlers[i].on('press', handlePress);
+        restoreSavedAudio(i);
     }
 
     function handleAll(evt){
@@ -36,7 +49,7 @@
     }
 
     function handleTap(evt){
-        console.log('tap on %s', evt.target.id);
+        // console.log('tap on %s', evt.target.id);
         var button = evt.target;
         var playing = button.classList.contains('playing');
         var recording = button.classList.contains('recording');
@@ -52,7 +65,7 @@
     }
 
     function handleDoubleTap(evt){
-        console.log('double tap on %s', evt.target.id);
+        // console.log('double tap on %s', evt.target.id);
         var button = evt.target;
         startRecording(button);
     }
@@ -62,10 +75,8 @@
     }
 
     function startRecording(button){
-        console.log('startRecording on %s', button.id);
-        // FIXME: stop playing all buttons
+        // console.log('startRecording on %s', button.id);
         // FIXME: disable all other buttons while recording
-        // FIXME: set timer for max recording time
         buttons.forEach(stopPlaying);
         button.classList.add('recording');
         // actually record and store audio file
@@ -78,23 +89,33 @@
             clearTimeout(recordingTimer);
             recordingTimer = null;
         }
-        console.log('stopRecording on %s', button.id);
-        var wav = recorder_stopRecording();
-        button.classList.remove('recording');
-        var audio = audioElems[indexOf(button)];
-        audio.src = wav;
-        startPlaying(button);
+        // console.log('stopRecording on %s', button.id);
+        recorder_stopRecording(function(blob){
+            button.classList.remove('recording');
+            var idx = indexOf(button);
+            var audio = audioElems[idx];
+            var wav = URL.createObjectURL(blob);
+            audio.src = wav;
+            startPlaying(button);
+            localforage.setItem('audio'+idx, blob, function(){
+                console.log('saved audio'+idx);
+            });
+        });
     }
 
     function startPlaying(button){
-        console.log('startPlaying on %s', button.id);
-        button.classList.add('playing');
+        // console.log('startPlaying on %s', button.id);
         var audio = audioElems[indexOf(button)];
-        audio.play();
+        if (audio.src){
+            button.classList.add('playing');
+            audio.play();
+        }else{
+            console.log('no audio for this button, download or record one');
+        }
     }
 
     function stopPlaying(button){
-        console.log('stopPlaying on %s', button.id);
+        // console.log('stopPlaying on %s', button.id);
         button.classList.remove('playing');
         var audio = audioElems[indexOf(button)];
         audio.pause();
@@ -107,8 +128,9 @@
     }
     var audio_context;
     var recorder;
+    var input
     function recorder_startUserMedia(stream) {
-      var input = audio_context.createMediaStreamSource(stream);
+      input = audio_context.createMediaStreamSource(stream);
       __log('Media stream created.');
       // Uncomment if you want the audio to feedback directly
       //input.connect(audio_context.destination);
@@ -123,36 +145,22 @@
     //   button.nextElementSibling.disabled = false;
       __log('Recording...');
     }
-    function recorder_stopRecording() {
+    function recorder_stopRecording(cb) {
       recorder && recorder.stop();
       __log('Stopped recording.');
 
       // create WAV download link using audio data blob
-      var wav = recorder_createWav();
+      recorder_createWav(cb);
       recorder.clear();
-      return wav;
+      recorder = new Recorder(input, {workerPath: 'js/recorderWorker.js'});
     }
-    function recorder_createWav() {
-      recorder && recorder.exportWAV(function(blob) {
-        var url = URL.createObjectURL(blob);
-        // var li = document.createElement('li');
-        // var au = document.createElement('audio');
-        // var hf = document.createElement('a');
 
-        // au.controls = true;
-        // au.src = url;
-        // hf.href = url;
-        // hf.download = new Date().toISOString() + '.wav';
-        // hf.innerHTML = hf.download;
-        // document.body.appendChild(hf);
-        // hf.click();
-        // FIXME: put the audio where the play button can find it
-        // li.appendChild(au);
-        // li.appendChild(hf);
-        // recordingslist.appendChild(li);
-        return url;
-      });
+    function recorder_createWav(cb) {
+        recorder.exportWAV(function(blob) {
+            cb(blob);
+        });
     }
+
     window.onload = function init() {
       try {
         // webkit shim
@@ -170,6 +178,7 @@
       navigator.getUserMedia({audio: true}, recorder_startUserMedia, function(e) {
         __log('No live audio input: ' + e);
       });
+
     };
 
 })(this);
