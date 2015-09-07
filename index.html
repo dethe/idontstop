@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-	<section>
+	<section id="main">
 	<h1>iDontStop</h1>
 	<table>
 		<tr>
@@ -54,14 +54,20 @@
 			<audio id="audio15" loop></audio>
 		</div>
 	</table>
-	<p><em>Double tap to RECORD</em></p>
-	<p><em>Single tap to PLAY</em></p>
-	<p><em>Hold down to NAME, SHARE, and DOWNLOAD</em></p>
+	<p class="info">Double tap to RECORD</p>
+	<p class="info">Single tap to PLAY</p>
+	<p class="info">Hold down to NAME, SHARE, and DOWNLOAD</p>
 	<hr>
-	<p>
-		<em>Replace all sounds</em>
-		<button class="info">i</button>
-	</p>
+	<button id="do_showinfo">i</button>
+	<p class="info">Replace all sounds</p>
+	    <div id="curtain">
+		</div>
+		<section id="menu">
+			<button class="menubutton" id="do_rename">name</button>
+			<button class="menubutton" id="do_share">share</button>
+			<button class="menubutton" id="do_download">download</button>
+			<button class="menubutton" id="do_cancel">cancel</button>
+		</section>
 	</section>
 	<script src="js/hammer.js"></script>
 	<script src="js/localforage.min.js"></script>

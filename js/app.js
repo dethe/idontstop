@@ -71,13 +71,54 @@
     }
 
     function handlePress(evt){
-        console.log('press on %s', evt.target.id);
+        // console.log('press on %s', evt.target.id);
+        showMenu(evt.target);
+    }
+
+    var currentButton = null;
+    function showMenu(button){
+        // console.log('showMenu')
+        currentButton = button;
+        $$('curtain').classList.add('show');
+        $$('menu').classList.add('show');
+    }
+
+    function hideMenu(){
+        currentButton = null;
+        $$('menu').classList.remove('show');
+        $$('curtain').classList.remove('show');
+    }
+
+    function renameCurrentButton(){
+        console.log('rename button %s', currentButton);
+    }
+
+    function shareFromCurrentButton(){
+        console.log('upload from button %s', currentButton);
+    }
+
+    function downloadToCurrentButton(){
+        console.log('download to button %s', currentButton);
+    }
+
+    function disable(button){
+        button.setAttribute('disabled', 'disabled');
+    }
+
+    function enable(button){
+        button.removeAttribute('disabled');
     }
 
     function startRecording(button){
         // console.log('startRecording on %s', button.id);
         // FIXME: disable all other buttons while recording
-        buttons.forEach(stopPlaying);
+        var myIdx = indexOf(button);
+        buttons.forEach(function(btn, idx){
+            stopPlaying(btn);
+            if (idx !== myIdx){
+                disable(btn);
+            }
+        });
         button.classList.add('recording');
         // actually record and store audio file
         recorder_startRecording();
@@ -96,6 +137,7 @@
             var audio = audioElems[idx];
             var wav = URL.createObjectURL(blob);
             audio.src = wav;
+            buttons.forEach(enable);
             startPlaying(button);
             localforage.setItem('audio'+idx, blob, function(){
                 console.log('saved audio'+idx);
@@ -180,5 +222,10 @@
       });
 
     };
+
+    $$('do_rename').addEventListener('click', renameCurrentButton, false);
+    $$('do_share').addEventListener('click', shareFromCurrentButton, false);
+    $$('do_download').addEventListener('click', downloadToCurrentButton, false);
+    $$('do_cancel').addEventListener('click', hideMenu, false);
 
 })(this);
