@@ -54,6 +54,26 @@ section{
     bottom: 10px;
 }
 
+#info{
+    width: 220px;
+    height: calc(100% - 20px);
+    position: absolute;
+    left: 10px;
+    bottom: -100%;
+    webkit-transition: bottom .4s;
+    transition: bottom .4s;
+    background-color: #FFF;
+    font-size: 10px;
+}
+
+#info p{
+    margin: 10px;
+}
+
+#info.show{
+    bottom: 10px;
+}
+
 button.menubutton{
     position: relative;
     width: 100%;

@@ -113,6 +113,14 @@
         $$('rename-input').classList.remove('show');
     }
 
+    function showInfo(){
+        $$('info').classList.add('show');
+    }
+
+    function hideInfo(){
+        $$('info').classList.remove('show');
+    }
+
     function renameCurrentButton(){
         console.log('rename button %s', currentButton);
         var idx = indexOf(currentButton);
@@ -320,5 +328,7 @@
     $$('do_cancel').addEventListener('click', hideMenu, false);
     $$('do_update_name').addEventListener('click', renameCurrentButton, false);
     $$('do_cancel2').addEventListener('click', hidePrompt, false);
+    $$('do_showinfo').addEventListener('click', showInfo, false);
+    $$('do_cancel3').addEventListener('click', hideInfo, false);
 
 })(this);

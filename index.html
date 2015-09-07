@@ -9,70 +9,81 @@
 </head>
 <body>
 	<section id="main">
-	<h1>iDontStop</h1>
-	<table>
-		<tr>
-			<td><button id="button0"><span class="title"></span></button></td>
-			<td><button id="button1"><span class="title"></span></button></td>
-			<td><button id="button2"><span class="title"></span></button></td>
-			<td><button id="button3"><span class="title"></span></button></td>
-		</tr>
-		<tr>
-			<td><button id="button4"><span class="title"></span></button></td>
-			<td><button id="button5"><span class="title"></span></button></td>
-			<td><button id="button6"><span class="title"></span></button></td>
-			<td><button id="button7"><span class="title"></span></button></td>
-		</tr>
-		<tr>
-			<td><button id="button8"><span class="title"></span></button></td>
-			<td><button id="button9"><span class="title"></span></button></td>
-			<td><button id="button10"><span class="title"></span></button></td>
-			<td><button id="button11"><span class="title"></span></button></td>
-		</tr>
-		<tr>
-			<td><button id="button12"><span class="title"></span></button></td>
-			<td><button id="button13"><span class="title"></span></button></td>
-			<td><button id="button14"><span class="title"></span></button></td>
-			<td><button id="button15"><span class="title"></span></button></td>
-		</tr>
-		<div>
-			<audio id="audio0" loop></audio>
-			<audio id="audio1" loop></audio>
-			<audio id="audio2" loop></audio>
-			<audio id="audio3" loop></audio>
-			<audio id="audio4" loop></audio>
-			<audio id="audio5" loop></audio>
-			<audio id="audio6" loop></audio>
-			<audio id="audio7" loop></audio>
-			<audio id="audio8" loop></audio>
-			<audio id="audio9" loop></audio>
-			<audio id="audio10" loop></audio>
-			<audio id="audio11" loop></audio>
-			<audio id="audio12" loop></audio>
-			<audio id="audio13" loop></audio>
-			<audio id="audio14" loop></audio>
-			<audio id="audio15" loop></audio>
+		<h1>iDontStop</h1>
+		<table>
+			<tr>
+				<td><button id="button0"><span class="title"></span></button></td>
+				<td><button id="button1"><span class="title"></span></button></td>
+				<td><button id="button2"><span class="title"></span></button></td>
+				<td><button id="button3"><span class="title"></span></button></td>
+			</tr>
+			<tr>
+				<td><button id="button4"><span class="title"></span></button></td>
+				<td><button id="button5"><span class="title"></span></button></td>
+				<td><button id="button6"><span class="title"></span></button></td>
+				<td><button id="button7"><span class="title"></span></button></td>
+			</tr>
+			<tr>
+				<td><button id="button8"><span class="title"></span></button></td>
+				<td><button id="button9"><span class="title"></span></button></td>
+				<td><button id="button10"><span class="title"></span></button></td>
+				<td><button id="button11"><span class="title"></span></button></td>
+			</tr>
+			<tr>
+				<td><button id="button12"><span class="title"></span></button></td>
+				<td><button id="button13"><span class="title"></span></button></td>
+				<td><button id="button14"><span class="title"></span></button></td>
+				<td><button id="button15"><span class="title"></span></button></td>
+			</tr>
+			<div>
+				<audio id="audio0" loop></audio>
+				<audio id="audio1" loop></audio>
+				<audio id="audio2" loop></audio>
+				<audio id="audio3" loop></audio>
+				<audio id="audio4" loop></audio>
+				<audio id="audio5" loop></audio>
+				<audio id="audio6" loop></audio>
+				<audio id="audio7" loop></audio>
+				<audio id="audio8" loop></audio>
+				<audio id="audio9" loop></audio>
+				<audio id="audio10" loop></audio>
+				<audio id="audio11" loop></audio>
+				<audio id="audio12" loop></audio>
+				<audio id="audio13" loop></audio>
+				<audio id="audio14" loop></audio>
+				<audio id="audio15" loop></audio>
+			</div>
+		</table>
+		<p class="info">Double tap to RECORD</p>
+		<p class="info">Single tap to PLAY</p>
+		<p class="info">Hold down to NAME, SHARE, and DOWNLOAD</p>
+		<hr>
+		<p class="info">Replace all sounds</p>
+		<button id="do_showinfo">i</button>
+	    <div id="curtain">
 		</div>
-	</table>
-	<p class="info">Double tap to RECORD</p>
-	<p class="info">Single tap to PLAY</p>
-	<p class="info">Hold down to NAME, SHARE, and DOWNLOAD</p>
-	<hr>
-	<button id="do_showinfo">i</button>
-	<p class="info">Replace all sounds</p>
-    <div id="curtain">
-	</div>
-	<section id="menu">
-		<button class="menubutton" id="do_rename">name</button>
-		<button class="menubutton" id="do_share">share</button>
-		<button class="menubutton" id="do_download">download</button>
-		<button class="menubutton" id="do_cancel">cancel</button>
-	</section>
-	<section id="rename-input">
-		<input name="new-name" id="new-name" />
-		<button class="menubutton" id="do_update_name">rename button</button>
-		<button class="menubutton" id="do_cancel2">cancel</button>
-	</section>
+		<section id="menu">
+			<button class="menubutton" id="do_rename">name</button>
+			<button class="menubutton" id="do_share">share</button>
+			<button class="menubutton" id="do_download">download</button>
+			<button class="menubutton" id="do_cancel">cancel</button>
+		</section>
+		<section id="rename-input">
+			<input name="new-name" id="new-name" />
+			<button class="menubutton" id="do_update_name">rename button</button>
+			<button class="menubutton" id="do_cancel2">cancel</button>
+		</section>
+		<section id="info">
+			<p>You will need to be connected to the internet in order to SHARE or DOWNLOAD sounds.</p>
+			<p>Shared sounds are for public use and cannot be copy written.</p>
+			<p>Sounds that are shared to the server will remain there until the server capacity limit is reached. The oldest sounds will be deleted first.</p>
+			<p>You cannot preview or choose the sounds you download. It's about serendipity.</p>
+			<p>If you want better sound quality use headphones or an input into your stereo.</p>
+			<p>Credits: Emma Hendrix, Julie Gendron, Dethe Elza</p>
+			<p>Email: <a href='mailto:idontstop.app@gmail.com'>idontstop.app@gmail.com</a></p>
+			<p>CC License: Attribution-NonCommercial-ShareAlike 2.5 Canada</p>
+			<button class="menubutton" id="do_cancel3">done</button>
+		</section>
 	</section>
 	<script src="js/hammer.js"></script>
 	<script src="js/localforage.min.js"></script>
