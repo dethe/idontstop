@@ -172,21 +172,31 @@
         var re = /formdata; filename="(.+)\.wav"/;
         var title = header.match(re)[1];
         var blob = this.response;
-        var idx = indexOf(currentButton);
+        var idx = this.index;
         console.log('received file [%s]: %s', idx, title);
         updateAudio(idx, blob);
         updateTitle(idx, title);
-        startPlaying(currentButton);
+        startPlaying(buttons[idx]);
         hideMenu();
     }
 
     function downloadToCurrentButton(){
-        console.log('download to button %s', currentButton.id);
+        downloadToButton(currentButton);
+    }
+
+    function downloadToButton(button){
+        console.log('download to button %s', button.id);
+        stopPlaying(button);
         var req = new XMLHttpRequest();
+        req.index = indexOf(button);
         req.addEventListener("load", _receiveDownloadedFile);
         req.open("GET", "/randomwav", true);
         req.responseType = 'blob';
         req.send();
+    }
+
+    function replaceAll(){
+        buttons.forEach(downloadToButton);
     }
 
     function disable(button){
@@ -330,5 +340,6 @@
     $$('do_cancel2').addEventListener('click', hidePrompt, false);
     $$('do_showinfo').addEventListener('click', showInfo, false);
     $$('do_cancel3').addEventListener('click', hideInfo, false);
+    $$('do_replace_all').addEventListener('click', replaceAll, false);
 
 })(this);
