@@ -28,7 +28,7 @@ class MainHandler(webapp.RequestHandler):
 class UploadHelper(webapp.RequestHandler):
     def get(self):
         upload_url = blobstore.create_upload_url('/upload')
-        self.response.headers.add_header('Content-Type', 'text/plain')
+        self.response.headers.add('Content-Type', 'text/plain')
         self.response.out.write(upload_url)
 
 # Content-type: audio/x-caf
@@ -36,6 +36,9 @@ class UploadHelper(webapp.RequestHandler):
 class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
     def post(self):
         upload_files = self.get_uploads('file')  # 'file' is file upload field in the form
+        filename = self.request.headers['Content-Disposition']
+        import sys
+        print >> sys.stderr, 'FILENAME:', filename
         # If there are more than MAX files, delete the overage
         total = blobstore.BlobInfo.all().count()
         if total > MAX:
@@ -50,7 +53,7 @@ class ServeHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self, resource):
         resource = str(urllib.unquote(resource))
         blob_info = blobstore.BlobInfo.get(resource)
-        self.response.headers.add_header('Meta', 'HTTP_EQUIV="CACHE-CONTROL", CONTENT="NO-CACHE"')
+        self.response.headers.add('Meta', 'HTTP_EQUIV="CACHE-CONTROL", CONTENT="NO-CACHE"')
         self.send_blob(blob_info)
 
 class RandomHandler(blobstore_handlers.BlobstoreDownloadHandler):
@@ -64,9 +67,11 @@ class RandomHandler(blobstore_handlers.BlobstoreDownloadHandler):
 class RandomWavHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self):
         from random import choice
-        resource = choice(blobstore.BlobInfo.all().filter('content_type =', 'audio/x-wav').fetch(limit=MAX, offset=0)).key()
+        resource = choice(blobstore.BlobInfo.all().filter('content_type =', 'audio/wav').fetch(limit=MAX, offset=0)).key()
         # logging.info('Returning %s at random', resource)
         blob_info = blobstore.BlobInfo.get(resource)
+        logging.info('returning %s', blob_info.filename);
+        self.response.headers.add('Content-Disposition', 'formdata; filename="' + blob_info.filename.encode('utf-8') + '"')
         self.send_blob(blob_info)
 
 app = webapp.WSGIApplication(

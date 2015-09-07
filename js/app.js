@@ -1,8 +1,19 @@
 (function(global){
 
+    // these are all caches for convient access
     var buttons = [];
     var buttonHandlers = [];
     var audioElems = [];
+    var audioBlobs = [];
+    var audioTitles = [];
+
+    // for debugging
+    global.buttons = buttons;
+    global.audioElems = audioElems;
+    global.audioBlobs = audioBlobs;
+    global.audioTitles = audioTitles;
+
+    // handle for timer to limit recording time
     var recordingTime = null;
 
     function $$(id){
@@ -11,18 +22,21 @@
 
     function indexOf(elem){
         // returns the numeric part of an element id
-        return parseInt(elem.id.match(/(\d)/)[0], 10);
+        return parseInt(elem.id.match(/(\d+)/)[0], 10);
     }
 
     function restoreSavedAudio(i){
         localforage.getItem('audio'+i, function(err, value){
             if (value){
+                audioBlobs[i] = value;
                 audioElems[i].src = URL.createObjectURL(value);
             }
         });
         localforage.getItem('title'+i, function(err, value){
-            console.log('getting title %s', i);
-            buttons[i].firstChild.textContent = value || 'audio'+i;
+            // console.log('getting title %s', i);
+            var title = value || 'audio'+i;
+            buttons[i].firstChild.textContent = title;
+            audioTitles[i] = title;
         });
     }
 
@@ -37,6 +51,7 @@
     }
 
     function handleAll(evt){
+        throw new Exception('handleAll should be deprecated');
         if (evt.type === 'tap'){
             handleTap(evt);
         }else if (evt.type === 'doubletap'){
@@ -77,7 +92,7 @@
 
     var currentButton = null;
     function showMenu(button){
-        // console.log('showMenu')
+        console.log('showMenu for button %s', button.id)
         currentButton = button;
         $$('curtain').classList.add('show');
         $$('menu').classList.add('show');
@@ -94,11 +109,62 @@
     }
 
     function shareFromCurrentButton(){
-        console.log('upload from button %s', currentButton);
+        console.log('upload from button %s', currentButton.id);
+        // FIXME: Disable everything while this is in progress?
+        var idx = indexOf(currentButton);
+        _getUploadUrl(_shareFromIndex(idx));
+    }
+
+    function _getUploadUrl(cb){
+        var req = new XMLHttpRequest();
+        req.addEventListener("load", cb);
+        req.open("GET", "/getuploadurl", true);
+        req.send();
+    }
+
+    function _shareFromIndex(idx){
+        var blob = audioBlobs[idx];
+        if (!blob){
+            // FIXME: We probably should not allow re-sharing audio that was downloaded?
+            console.log('you can only share if there is audio recorded');
+        }
+        var title = audioTitles[idx] + '.wav';
+        return function(evt){
+            var formData = new FormData();
+            formData.append('file', blob, title);
+            var uploadUrl = this.responseText;
+            var request = new XMLHttpRequest();
+            request.addEventListener('load', _uploadComplete);
+            request.open('POST', uploadUrl, true);
+            request.send(formData);
+        };
+    }
+
+    function _uploadComplete(response){
+        console.log('upload complete: %o', response);
+        // re-enable anything disabled
+        hideMenu();
+    }
+
+    function _receiveDownloadedFile(evt){
+        var header = this.getResponseHeader('Content-Disposition');
+        var re = /formdata; filename="(.+)\.wav"/;
+        var title = header.match(re)[1];
+        var blob = new Blob([this.result], {type: 'audio/wav'});
+        var idx = indexOf(currentButton);
+        console.log('received file [%s]: %s', idx, title);
+        updateAudio(idx, blob);
+        updateTitle(idx, title);
+        startPlaying(currentButton);
+        hideMenu();
     }
 
     function downloadToCurrentButton(){
-        console.log('download to button %s', currentButton);
+        console.log('download to button %s', currentButton.id);
+        var req = new XMLHttpRequest();
+        req.addEventListener("load", _receiveDownloadedFile);
+        req.open("GET", "/randomwav", true);
+        req.send();
     }
 
     function disable(button){
@@ -111,7 +177,6 @@
 
     function startRecording(button){
         // console.log('startRecording on %s', button.id);
-        // FIXME: disable all other buttons while recording
         var myIdx = indexOf(button);
         buttons.forEach(function(btn, idx){
             stopPlaying(btn);
@@ -125,6 +190,23 @@
         recordingTimer = setTimeout(function(){stopRecording(button);}, 5000);
     }
 
+    function updateAudio(idx, blob){
+        // save audio blob and update caches
+        audioBlobs[idx] = blob;
+        audioElems[idx].src = URL.createObjectURL(blob);
+        localforage.setItem('audio'+idx, blob, function(){
+            console.log('saved audio'+idx);
+        });
+    }
+
+    function updateTitle(idx, title){
+        buttons[idx].firstChild.textContent = title;
+        audioTitles[idx] = title;
+        localforage.setItem('title'+idx, title, function(){
+            console.log('saved title%s: %s', idx, title);
+        });
+    }
+
     function stopRecording(button){
         if (recordingTimer){
             clearTimeout(recordingTimer);
@@ -134,14 +216,9 @@
         recorder_stopRecording(function(blob){
             button.classList.remove('recording');
             var idx = indexOf(button);
-            var audio = audioElems[idx];
-            var wav = URL.createObjectURL(blob);
-            audio.src = wav;
+            updateAudio(idx, blob);
             buttons.forEach(enable);
             startPlaying(button);
-            localforage.setItem('audio'+idx, blob, function(){
-                console.log('saved audio'+idx);
-            });
         });
     }
 
