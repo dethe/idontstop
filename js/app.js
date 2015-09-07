@@ -150,7 +150,7 @@
         var header = this.getResponseHeader('Content-Disposition');
         var re = /formdata; filename="(.+)\.wav"/;
         var title = header.match(re)[1];
-        var blob = new Blob([this.result], {type: 'audio/wav'});
+        var blob = this.response;
         var idx = indexOf(currentButton);
         console.log('received file [%s]: %s', idx, title);
         updateAudio(idx, blob);
@@ -164,6 +164,7 @@
         var req = new XMLHttpRequest();
         req.addEventListener("load", _receiveDownloadedFile);
         req.open("GET", "/randomwav", true);
+        req.responseType = 'blob';
         req.send();
     }
 
