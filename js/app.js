@@ -104,8 +104,21 @@
         $$('curtain').classList.remove('show');
     }
 
+    function showPrompt(){
+        $$('rename-input').classList.add('show');
+        $$('new-name').value = currentButton.firstChild.textContent;
+    }
+
+    function hidePrompt(){
+        $$('rename-input').classList.remove('show');
+    }
+
     function renameCurrentButton(){
         console.log('rename button %s', currentButton);
+        var idx = indexOf(currentButton);
+        updateTitle(idx, $$('new-name').value);
+        hidePrompt();
+        hideMenu();
     }
 
     function shareFromCurrentButton(){
@@ -301,9 +314,11 @@
 
     };
 
-    $$('do_rename').addEventListener('click', renameCurrentButton, false);
+    $$('do_rename').addEventListener('click', showPrompt, false);
     $$('do_share').addEventListener('click', shareFromCurrentButton, false);
     $$('do_download').addEventListener('click', downloadToCurrentButton, false);
     $$('do_cancel').addEventListener('click', hideMenu, false);
+    $$('do_update_name').addEventListener('click', renameCurrentButton, false);
+    $$('do_cancel2').addEventListener('click', hidePrompt, false);
 
 })(this);

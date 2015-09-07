@@ -29,17 +29,31 @@ section{
 #menu{
     width: 220px;
     position: absolute;
-    left: 0;
+    left: 10px;
     bottom: -100%;
     -webkit-transition: bottom .4s;
     transition: bottom .4s;
-    margin-right: 10px;
-    margin-left: 10px;
 }
 
 #menu.show{
     bottom: 10px;
 }
+
+#rename-input{
+    width: 220px;
+    height: calc(100% - 20px);
+    position: absolute;
+    left: 10px;
+    bottom: -100%;
+    webkit-transition: bottom .4s;
+    transition: bottom .4s;
+    background-color: #000;
+}
+
+#rename-input.show{
+    bottom: 10px;
+}
+
 button.menubutton{
     position: relative;
     width: 100%;
